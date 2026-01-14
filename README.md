@@ -1,16 +1,10 @@
-## Client
-
-```
-npx create-react-app client
-```
-
 ## Posts service
 
 ```
 mkdir posts
 cd posts
 npm init -y
-npm install express cors axios nodemon
+npm install express cors nodemon
 touch index.js
 ```
 
@@ -20,9 +14,11 @@ touch index.js
 const express = require('express');
 const bodyParser = require('body-parser')
 const { randomBytes } = require('crypto');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 const posts = {};
 
@@ -64,7 +60,7 @@ npm start
 mkdir comments
 cd comments
 npm init -y
-npm install express cors axios nodemon
+npm install express cors nodemon
 touch index.js
 ```
 
@@ -74,9 +70,11 @@ touch index.js
 const express = require('express');
 const bodyParser = require('body-parser')
 const { randomBytes } = require('crypto');
+const cors = require('cors');
 
 const app = express();
 app.use(bodyParser.json());
+app.use(cors());
 
 const commentsByPostId = {};
 
@@ -106,6 +104,182 @@ app.listen(4001, () => {
   "scripts": {
     "start": "nodemon index.js"
   },
+```
+
+```
+npm start
+```
+
+## Client
+
+```
+npx create-react-app client
+npm install axios
+```
+
+#### client/src/index.js
+
+```
+import React from 'react';
+import ReactDOM from 'react-dom/client';
+import App from './App';
+
+const root = ReactDOM.createRoot(document.getElementById('root'));
+root.render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+```
+
+#### client/public/index.html
+
+```
+  <head>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+  </head>
+```
+
+#### client/src/App.js
+
+```
+import React from "react";
+import PostCreate from "./PostCreate";
+import PostList from "./PostList";
+
+export default function App() {
+    return (
+        <div className="container">
+            <h1>Create Post</h1>
+            <PostCreate />
+            <hr />
+            <h1>Posts</h1>
+            <PostList />
+        </div>
+    );
+}
+```
+
+#### client/src/PostCreate.js
+
+```
+import React, { useState } from "react";
+import axios from "axios";
+
+export default function PostCreate() {
+    const [title, setTitle] = useState("");
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        await axios.post('http://localhost:4000/posts', { title });
+        setTitle("");
+    };
+
+    return (
+        <div>
+            <form onSubmit={onSubmit}>
+                <div className="mb-3">
+                    <label htmlFor="title">Title</label>
+                    <input value={title} onChange={e => setTitle(e.target.value)} type="text" id="title" className="form-control" />
+                </div>
+                <button type="submit" className="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    );
+}
+```
+
+#### client/src/PostList.js
+
+```
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+import CommentCreate from "./CommentCreate";
+import CommentList from "./CommentList";
+
+export default function PostList() {
+    const [posts, setPosts] = useState({});
+
+    const fetchPosts = async () => {
+        const res = await axios.get('http://localhost:4000/posts');
+        setPosts(res.data);
+    };
+
+    useEffect(() => {
+        fetchPosts();
+    }, []);
+
+    return (
+        <div className="d-flex flex-row flex-wrap justify-content-between">
+            {Object.values(posts).map(({ id, title }) => (
+                <div key={id} className="card" style={{ width: '49%', marginBottom: '20px' }}>
+                    <div className="card-body">
+                        <h3>{title}</h3>
+                        <CommentList postId={id} />
+                        <CommentCreate postId={id} />
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+}
+```
+
+#### client/src/CommentList.js
+
+```
+import React, { useEffect, useState } from "react";
+import axios from "axios";
+
+export default function CommentList({ postId }) {
+    const [comments, setComments] = useState([]);
+
+    const fetchComments = async () => {
+        const res = await axios.get(`http://localhost:4001/posts/${postId}/comments`);
+        setComments(res.data);
+    };
+
+    useEffect(() => {
+        fetchComments();
+    }, []);
+
+    return (
+        <ul>
+            {Object.values(comments).map(({ id, content }) => (
+                <li key={id}>{content}</li>
+            ))}
+        </ul>
+    );
+}
+```
+
+#### client/src/CommentCreate.js
+
+```
+import React, { useState } from "react";
+import axios from "axios";
+
+export default function CommentCreate({ postId }) {
+    const [content, setContent] = useState("");
+
+    const onSubmit = async (e) => {
+        e.preventDefault();
+        await axios.post(`http://localhost:4001/posts/${postId}/comments`, { content, postId });
+        setContent("");
+    };
+
+    return (
+        <div>
+            <form onSubmit={onSubmit}>
+                <div className="mb-3">
+                    <label htmlFor="content">New Comment</label>
+                    <input value={content} onChange={e => setContent(e.target.value)} type="text" id="content" className="form-control" />
+                </div>
+                <button type="submit" className="btn btn-primary">Submit</button>
+            </form>
+        </div>
+    );
+}
 ```
 
 ```
