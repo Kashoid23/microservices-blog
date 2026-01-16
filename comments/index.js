@@ -27,7 +27,8 @@ app.post('/posts/:id/comments', (req, res) => {
         data: {
             id: commentId,
             content,
-            postId: req.params.id
+            postId: req.params.id,
+            status: 'pending'
         }
     }).catch((err) => {
         console.log('Error sending event to Event Bus', err.message);
@@ -38,6 +39,31 @@ app.post('/posts/:id/comments', (req, res) => {
 
 app.post('/events', (req, res) => {
     console.log('Received Event:', req.body.type);
+
+    if (req.body.type === 'CommentModerated') {
+        const { id, postId, status, content } = req.body.data;
+        const comments = commentsByPostId[postId];
+
+        const comment = comments.find(comment => {
+            return comment.id === id;
+        });
+
+        if (comment) {
+            comment.status = status;
+
+            axios.post('http://localhost:4005/events', {
+                type: 'CommentUpdated',
+                data: {
+                    id,
+                    postId,
+                    content,
+                    status
+                }
+            }).catch((err) => {
+                console.log('Error sending event to Event Bus', err.message);
+            });
+        }
+    }
 
     res.send({});
 });
