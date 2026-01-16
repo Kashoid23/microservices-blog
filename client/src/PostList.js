@@ -7,7 +7,7 @@ export default function PostList() {
     const [posts, setPosts] = useState({});
 
     const fetchPosts = async () => {
-        const res = await axios.get('http://localhost:4000/posts');
+        const res = await axios.get('http://localhost:4002/posts');
         setPosts(res.data);
     };
 
@@ -17,11 +17,11 @@ export default function PostList() {
 
     return (
         <div className="d-flex flex-row flex-wrap justify-content-between">
-            {Object.values(posts).map(({ id, title }) => (
+            {Object.values(posts).map(({ id, title, comments }) => (
                 <div key={id} className="card" style={{ width: '49%', marginBottom: '20px' }}>
                     <div className="card-body">
                         <h3>{title}</h3>
-                        <CommentList postId={id} />
+                        <CommentList comments={comments} />
                         <CommentCreate postId={id} />
                     </div>
                 </div>
