@@ -1,3 +1,5 @@
+# Section 1
+
 <kbd><img width="1288" height="213" alt="Screenshot 2026-01-14 at 21 16 55" src="https://github.com/user-attachments/assets/d7136881-5af7-4627-8c8b-1002cb9347c2" /></kbd>
 <kbd><img width="1340" height="542" alt="Screenshot 2026-01-14 at 21 13 28" src="https://github.com/user-attachments/assets/2baa1ae7-0a06-48ac-8c8c-900d8442b3e5" /></kbd>
 
@@ -288,4 +290,40 @@ export default function CommentCreate({ postId }) {
 
 ```
 npm start
+```
+
+# Section 3
+
+## Dockerizing the Posts service
+
+```
+cd posts
+touch Dockerfile
+touch .dockerignore
+```
+
+#### posts/.dockerignore
+
+```
+node_modules
+```
+
+#### posts/Dockerfile
+
+```
+FROM node:alpine
+
+WORKDIR /app
+COPY package.json .
+RUN npm install
+COPY . .
+
+CMD ["npm", "start"]
+```
+
+```
+docker build -t blog/posts .
+docker run blog/posts
+docker ps
+docker logs [ container ID ]
 ```
