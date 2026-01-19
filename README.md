@@ -1,8 +1,11 @@
 # Section 1
 
-<kbd><img width="1288" height="213" alt="Screenshot 2026-01-14 at 21 16 55" src="https://github.com/user-attachments/assets/d7136881-5af7-4627-8c8b-1002cb9347c2" /></kbd>
-<kbd><img width="1340" height="542" alt="Screenshot 2026-01-14 at 21 13 28" src="https://github.com/user-attachments/assets/2baa1ae7-0a06-48ac-8c8c-900d8442b3e5" /></kbd>
+Data management between services is the big problem of microservices
 
+Database-Per-Service pattern
+- we want to run each service independently
+- DB schema/structure might change unexpectedly 
+- different types of DB’s (SQL VS NoSQL)
 
 ## Posts service
 
@@ -292,7 +295,20 @@ export default function CommentCreate({ postId }) {
 npm start
 ```
 
+# Section 2
+
+Communication strategies between services
+- sync (communicate with each other using direct requests - NOT RECOMMENDED for microservices)
+- async (communicate with each other using events, e.g. Event Bus or Event Broker)
+
+Ready to go Event Bus solutions - RabbitMQ, Kafka, NATS…
+
 # Section 3
+
+Docker is an open-source platform for developing, shipping, and running applications in isolated environments called containers.
+Build - process of creating a Docker Image from instructions in a Dockerfile.
+Image - a read-only template (blueprint) that contains the application, libraries, dependencies, and configuration needed to run an application.
+Container - a runnable, isolated instance of a Docker Image
 
 ## Dockerizing the Posts service
 
@@ -328,6 +344,12 @@ docker ps
 ```
 
 # Section 4
+
+Kubernetes is an open-source platform for automating the deployment, scaling, and management of containerized applications
+A Kubernetes Cluster is a set of physical or virtual machines, called Nodes, that are grouped together to run and manage (with program called Master) containerized applications.
+Pod is the smallest unit in Kubernetes, a logical wrapper for one or more tightly-grouped containers sharing resources (like storage/network) that run on a single node within the cluster, acting as a single application instance.
+Deployment - monitors a set of pods, make sure they are running and restarts them if they crash
+Service - provides an easy to remember URL to access a running container
 
 ## Orchestrating Collections of Services with Kubernetes
 
