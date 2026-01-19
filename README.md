@@ -373,7 +373,7 @@ kubectl get deployments
 kubectl get pods
 ```
 
-## To apply new code changes
+## To rebuild latest Docker Image, push to Docker Hub and apply for Kubernetes Deployments
 
 ```
 docker build -t kashoid/blog-posts .
