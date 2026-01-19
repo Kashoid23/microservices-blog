@@ -303,6 +303,162 @@ Communication strategies between services
 
 Ready to go Event Bus solutions - RabbitMQ, Kafka, NATS…
 
+#### event-bus/index.js
+
+```
+const express = require('express');
+const bodyParser = require('body-parser')
+const axios = require('axios');
+
+const app = express();
+app.use(bodyParser.json());
+
+const events = [];
+
+app.get('/events', (req, res) => {
+    res.send(events);
+});
+
+app.post('/events', (req, res) => {
+    const event = req.body;
+
+    events.push(event);
+
+    axios.post('http://localhost:4000/events', event).catch((err) => {
+        console.log('Error forwarding event to Posts Service', err.message);
+    });
+    axios.post('http://localhost:4001/events', event).catch((err) => {
+        console.log('Error forwarding event to Comments Service', err.message);
+    });
+    axios.post('http://localhost:4002/events', event).catch((err) => {
+        console.log('Error forwarding event to Query Service', err.message);
+    });
+    axios.post('http://localhost:4003/events', event).catch((err) => {
+        console.log('Error forwarding event to Moderation Service', err.message);
+    });
+
+    res.send({ status: 'OK' });
+});
+
+app.listen(4005, () => {
+    console.log('Listening on 4005');
+});
+```
+
+#### posts/index.js
+
+```
+const express = require('express');
+const bodyParser = require('body-parser')
+const { randomBytes } = require('crypto');
+const cors = require('cors');
+const axios = require('axios');
+
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+
+const posts = {};
+
+app.get('/posts', (req, res) => {
+    res.send(posts);
+});
+
+app.post('/posts', (req, res) => {
+    const id = randomBytes(4).toString('hex');
+    const { title } = req.body;
+
+    posts[id] = {
+        id, title
+    };
+
+    axios.post('http://localhost:4005/events', {
+        type: 'PostCreated',
+        data: { id, title }
+    }).catch((err) => {
+        console.log('Error sending event to Event Bus', err.message);
+    });
+
+    res.status(201).send(posts[id]);
+});
+
+app.post('/events', (req, res) => {
+    console.log('Received Event:', req.body.type);
+
+    res.send({});
+});
+
+app.listen(4000, () => {
+    console.log('Listening on 4000');
+});
+```
+
+#### posts/index.js
+
+```
+const express = require('express');
+const bodyParser = require('body-parser')
+const cors = require('cors');
+const axios = require('axios');
+
+const app = express();
+app.use(bodyParser.json());
+app.use(cors());
+
+const posts = {};
+
+const handleEvent = (type, data) => {
+    if (type === 'PostCreated') {
+        const { id, title } = data;
+        posts[id] = { id, title, comments: [] };
+    }
+
+    if (type === 'CommentCreated') {
+        const { id, content, postId, status } = data;
+        const post = posts[postId];
+        if (post) {
+            post.comments.push({ id, content, status });
+        }
+    }
+
+    if (type === 'CommentUpdated') {
+        const { id, postId, status } = data;
+        const post = posts[postId];
+        if (post) {
+            const comment = post.comments.find(comment => comment.id === id);
+            if (comment) {
+                comment.status = status;
+            }
+        }
+    }
+};
+
+app.get('/posts', (req, res) => {
+    res.send(posts);
+});
+
+app.post('/events', (req, res) => {
+    const { type, data } = req.body;
+
+    handleEvent(type, data);
+
+    res.send({});
+});
+
+app.listen(4002, () => {
+    console.log('Listening on 4002');
+
+    axios.get('http://localhost:4005/events').then((res) => {
+        for (let event of res.data) {
+            console.log('Processing event:', event.type);
+            handleEvent(event.type, event.data);
+        }
+    }).catch((err) => {
+        console.log('Error fetching events from Event Bus', err.message);
+    });
+});
+```
+
 # Section 3
 
 Docker is an open-source platform for developing, shipping, and running applications in isolated environments called containers.
