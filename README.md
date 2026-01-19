@@ -322,8 +322,61 @@ CMD ["npm", "start"]
 ```
 
 ```
-docker build -t blog/posts .
-docker run blog/posts
+docker build -t kashoid/blog-posts .
+docker run kashoid/blog-posts
 docker ps
-docker logs [ container ID ]
+```
+
+# Section 4
+
+## Orchestrating Collections of Services with Kubernetes
+
+```
+kubectl version
+```
+
+```
+cd posts
+docker build -t kashoid/blog-posts .
+mkdir infra
+cd infra
+mkdir k8s
+cd k8s
+touch posts-deployment.yaml
+```
+
+#### posts/infra/k8s/posts-deployment.yaml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: posts-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: posts
+  template:
+    metadata:
+      labels:
+        app: posts
+    spec:
+      containers:
+        - name: posts
+          image: kashoid/blog-posts
+```
+
+```
+kubectl apply -f posts-deployment.yaml
+kubectl get deployments
+kubectl get pods
+```
+
+## To apply new code changes
+
+```
+docker build -t kashoid/blog-posts .
+docker push kashoid/blog-posts
+kubectl rollout restart deployment posts-deployment
 ```
