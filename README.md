@@ -298,7 +298,7 @@ npm start
 # Section 2
 
 Communication strategies between services
-- sync (communicate with each other using direct requests - NOT RECOMMENDED for microservices)
+- sync (communicate with each other using direct requests)
 - async (communicate with each other using events, e.g. Event Bus or Event Broker)
 
 Ready to go Event Bus solutions - RabbitMQ, Kafka, NATS…
