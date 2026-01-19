@@ -393,7 +393,7 @@ app.listen(4000, () => {
 });
 ```
 
-#### posts/index.js
+#### query/index.js
 
 ```
 const express = require('express');
