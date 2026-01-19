@@ -461,10 +461,10 @@ app.listen(4002, () => {
 
 # Section 3
 
-Docker is an open-source platform for developing, shipping, and running applications in isolated environments called containers.
-Build - process of creating a Docker Image from instructions in a Dockerfile.
-Image - a read-only template (blueprint) that contains the application, libraries, dependencies, and configuration needed to run an application.
-Container - a runnable, isolated instance of a Docker Image
+- <b>Docker</b> is an open-source platform for developing, shipping, and running applications in isolated environments called containers.
+- <b>Build</b> - process of creating a Docker Image from instructions in a Dockerfile.
+- <b>Image</b> - a read-only template (blueprint) that contains the application, libraries, dependencies, and configuration needed to run an application.
+- <b>Container</b> - a runnable, isolated instance of a Docker Image
 
 ## Dockerizing the Posts service
 
@@ -501,11 +501,11 @@ docker ps
 
 # Section 4
 
-Kubernetes is an open-source platform for automating the deployment, scaling, and management of containerized applications
-A Kubernetes Cluster is a set of physical or virtual machines, called Nodes, that are grouped together to run and manage (with program called Master) containerized applications.
-Pod is the smallest unit in Kubernetes, a logical wrapper for one or more tightly-grouped containers sharing resources (like storage/network) that run on a single node within the cluster, acting as a single application instance.
-Deployment - monitors a set of pods, make sure they are running and restarts them if they crash
-Service - provides an easy to remember URL to access a running container
+- <b>Kubernetes</b> is an open-source platform for automating the deployment, scaling, and management of containerized applications
+- A <b>Kubernetes Cluster</b> is a set of physical or virtual machines, called <b>Nodes</b>, that are grouped together to run and manage (with program called Master) containerized applications.
+- <b>Pod</b> is the smallest unit in Kubernetes, a logical wrapper for one or more tightly-grouped containers sharing resources (like storage/network) that run on a single node within the cluster, acting as a single application instance.
+- <b>Deployment</b> - monitors a set of pods, make sure they are running and restarts them if they crash
+- <b>Service</b> - provides an easy to remember URL to access a running container
 
 ## Orchestrating Collections of Services with Kubernetes
 
