@@ -507,7 +507,7 @@ docker ps
 - <b>Deployment</b> - monitors a set of pods, make sure they are running and restarts them if they crash
 - <b>Service</b> - provides an easy to remember URL to access a running container
 
-## Orchestrating Collections of Services with Kubernetes
+## Orchestrating Collections of Services with Kubernetes Deployments
 
 ```
 kubectl version
@@ -515,7 +515,6 @@ kubectl version
 
 ```
 cd posts
-docker build -t kashoid/blog-posts .
 mkdir infra
 cd infra
 mkdir k8s
@@ -557,4 +556,39 @@ kubectl get pods
 docker build -t kashoid/blog-posts .
 docker push kashoid/blog-posts
 kubectl rollout restart deployment posts-deployment
+```
+
+## Types of Kubernetes Services:
+
+- Cluster IP - exposes pods inside the cluster, communication between different microservices
+- Node Port - accessible from outside the cluster, for testing, demo environments, or situations where you have your own external load-balancing solution and want traffic routed to your Nodes
+- Load Balancer - accessible from outside the cluster, the standard way to expose public-facing, production applications on a cloud platform
+- External Name - for referencing external services (like a database hosted outside of Kubernetes) using a consistent internal service name
+
+```
+cd posts/infra/k8s
+touch posts-service.yaml
+```
+
+#### posts/infra/k8s/posts-service.yaml
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: posts-service
+spec:
+  type: NodePort
+  selector:
+    app: posts
+  ports:
+    - name: posts
+      protocol: TCP
+      port: 4000
+      targetPort: 4000
+```
+
+```
+kubectl apply -f posts-service.yaml
+kubectl get services
 ```
