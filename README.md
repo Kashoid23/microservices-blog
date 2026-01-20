@@ -591,3 +591,36 @@ spec:
 kubectl apply -f posts-service.yaml
 kubectl get services
 ```
+
+#### Access services in Docker Desktop
+
+```
+kubectl port-forward service/posts-service 4000:4000
+```
+
+1. kubectl opens a tunnel
+
+```
+No NodePort
+No Ingress
+No VM networking
+No firewall rules
+```
+
+2. Traffic flow
+
+```
+Postman / Browser
+↓
+localhost:4000
+↓
+kubectl (port-forward)
+↓
+Kubernetes API Server
+↓
+Service: posts-service
+↓
+Pod IP: 10.244.1.9:4000
+↓
+Node.js app
+```
