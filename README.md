@@ -514,7 +514,6 @@ kubectl version
 ```
 
 ```
-cd posts
 mkdir infra
 cd infra
 mkdir k8s
@@ -522,7 +521,7 @@ cd k8s
 touch posts-deployment.yaml
 ```
 
-#### posts/infra/k8s/posts-deployment.yaml
+#### infra/k8s/posts-deployment.yaml
 
 ```
 apiVersion: apps/v1
@@ -550,7 +549,7 @@ kubectl get deployments
 kubectl get pods
 ```
 
-## To rebuild latest Docker Image, push to Docker Hub and apply for Kubernetes Deployments
+#### To rebuild latest Docker Image, push to Docker Hub and apply for Kubernetes Deployments
 
 ```
 docker build -t kashoid/blog-posts .
@@ -566,11 +565,11 @@ kubectl rollout restart deployment posts-deployment
 - External Name - for referencing external services (like a database hosted outside of Kubernetes) using a consistent internal service name
 
 ```
-cd posts/infra/k8s
+cd infra/k8s
 touch posts-service.yaml
 ```
 
-#### posts/infra/k8s/posts-service.yaml
+#### infra/k8s/posts-service.yaml
 
 ```
 apiVersion: v1
