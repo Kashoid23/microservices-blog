@@ -630,6 +630,8 @@ Node.js app
 - <b>Ingress Resource</b> - Kubernetes API object that defines the rules for routing external HTTP/HTTPS traffic to services inside the cluster. This defines paths, hostnames, and routing rules.
 - <b>Ingress Controller</b> - a piece of software responsible for implementing and managing the Ingress resource by processing and applying the rules defined in it. It typically functions as a reverse proxy or load balancer.
 
+<img width="1440" height="558" alt="K80I4gN" src="https://github.com/user-attachments/assets/46be8502-ec20-4115-a6a8-afe5b4dccacb" />
+
 ```
 https://kubernetes.github.io/ingress-nginx/deploy/#docker-desktop
 ```
