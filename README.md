@@ -175,7 +175,7 @@ cd infra/k8s
 touch posts-service.yaml
 ```
 
-#### [infra/k8s/posts-service.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/eeb39fe39d0088298f3c70543c7a27b8f2f41284/infra/k8s/posts-service.yaml)
+#### [Create infra/k8s/posts-service.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/eeb39fe39d0088298f3c70543c7a27b8f2f41284/infra/k8s/posts-service.yaml)
 
 ```
 kubectl apply -f posts-service.yaml
