@@ -4,9 +4,11 @@ import axios from "axios";
 export default function CommentCreate({ postId }) {
     const [content, setContent] = useState("");
 
-    const onSubmit = async (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
-        await axios.post(`http://comments-service:4001/posts/${postId}/comments`, { content, postId });
+        axios.post(`http://blog.com/posts/${postId}/comments`, { content, postId }).catch((err) => {
+            console.log('Error creating comment', err.message);
+        });
         setContent("");
     };
 

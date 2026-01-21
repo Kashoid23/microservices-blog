@@ -4,9 +4,11 @@ import axios from "axios";
 export default function PostCreate() {
     const [title, setTitle] = useState("");
 
-    const onSubmit = async (e) => {
+    const onSubmit = (e) => {
         e.preventDefault();
-        await axios.post('http://posts-service:4000/posts', { title });
+        axios.post('http://blog.com/posts/new', { title }).catch((err) => {
+            console.log('Error creating post', err.message);
+        });
         setTitle("");
     };
 

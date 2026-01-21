@@ -557,12 +557,12 @@ docker push kashoid/blog-posts
 kubectl rollout restart deployment posts-deployment
 ```
 
-## Types of Kubernetes Services:
+## Types of Kubernetes Services
 
-- Cluster IP - exposes pods inside the cluster, communication between different microservices
-- Node Port - accessible from outside the cluster, for testing, demo environments, or situations where you have your own external load-balancing solution and want traffic routed to your Nodes
-- Load Balancer - accessible from outside the cluster, the standard way to expose public-facing, production applications on a cloud platform
-- External Name - for referencing external services (like a database hosted outside of Kubernetes) using a consistent internal service name
+- <b>Cluster IP</b> - exposes pods inside the cluster, communication between different microservices
+- <b>Node Port</b> - accessible from outside the cluster, for testing, demo environments, or situations where you have your own external load-balancing solution and want traffic routed to your Nodes
+- <b>Load Balancer</b> - accessible from outside the cluster, the standard way to expose public-facing, production applications on a cloud platform
+- <b>External Name</b> - for referencing external services (like a database hosted outside of Kubernetes) using a consistent internal service name
 
 ```
 cd infra/k8s
@@ -592,7 +592,7 @@ kubectl apply -f posts-service.yaml
 kubectl get services
 ```
 
-#### Access services in Docker Desktop
+#### Test access to the services
 
 ```
 kubectl port-forward service/posts-service 4000:4000
@@ -623,4 +623,130 @@ Service: posts-service
 Pod IP: 10.244.1.9:4000
 ↓
 Node.js app
+```
+
+## Installing Ingress-NGINX
+
+- <b>Ingress Resource</b> - Kubernetes API object that defines the rules for routing external HTTP/HTTPS traffic to services inside the cluster. This defines paths, hostnames, and routing rules.
+- <b>Ingress Controller</b> - a piece of software responsible for implementing and managing the Ingress resource by processing and applying the rules defined in it. It typically functions as a reverse proxy or load balancer.
+
+```
+https://kubernetes.github.io/ingress-nginx/deploy/#docker-desktop
+```
+
+#### infra/k8s/ingress-service.yaml
+
+```
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: ingress-service
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+spec:
+  ingressClassName: nginx
+  rules:
+    - host: blog.com
+      http:
+        paths:
+          - path: /posts
+            pathType: Prefix
+            backend:
+              service:
+                name: posts-service
+                port:
+                  number: 4000
+          - path: /posts/?(.*)/comments
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: comments-service
+                port:
+                  number: 4001
+          - path: /posts/comments
+            pathType: Prefix
+            backend:
+              service:
+                name: query-service
+                port:
+                  number: 4002
+          - path: /?(.*)
+            pathType: ImplementationSpecific
+            backend:
+              service:
+                name: client-service
+                port:
+                  number: 3000
+```
+
+```
+kubectl apply -f ingress-service.yaml
+```
+
+```
+sudo nano /etc/hosts
+```
+
+#### /etc/hosts
+
+```
+...
+
+127.0.0.1 blog.com
+```
+
+```
+docker build -t kashoid/blog-client .
+docker push kashoid/blog-client
+```
+
+Replace localhost:400X with blog.com for React components
+
+#### infra/k8s/client-deployment.yaml
+
+```
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: client-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: client
+  template:
+    metadata:
+      labels:
+        app: client
+    spec:
+      containers:
+        - name: client
+          image: kashoid/blog-client
+```
+
+#### infra/k8s/client-service.yaml
+
+```
+apiVersion: v1
+kind: Service
+metadata:
+  name: client-service
+spec:
+  type: ClusterIP
+  selector:
+    app: client
+  ports:
+    - name: client
+      protocol: TCP
+      port: 3000
+      targetPort: 3000
+```
+
+```
+kubectl apply -f client-deployment.yaml
+kubectl apply -f client-service.yaml
+```
+
+```
+kubectl describe ingress ingress-service
 ```

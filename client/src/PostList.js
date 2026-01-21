@@ -7,7 +7,7 @@ export default function PostList() {
     const [posts, setPosts] = useState({});
 
     const fetchPosts = () => {
-        const res = axios.get('http://query-service:4002/posts').then((res) => {
+        const res = axios.get('http://blog.com/posts').then((res) => {
             setPosts(res.data);
         }).catch((err) => {
             console.log('Error fetching posts', err.message);
