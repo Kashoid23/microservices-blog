@@ -1,3 +1,5 @@
+<kbd><img width="1339" height="601" alt="Screenshot 2026-01-21 at 14 33 01" src="https://github.com/user-attachments/assets/c59309fc-ec8a-4df7-b7a8-b7cfd3718d8e" /></kbd>
+
 # Section 1
 
 Data management between services is the big problem of microservices
