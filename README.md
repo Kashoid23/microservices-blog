@@ -752,3 +752,17 @@ kubectl apply -f client-service.yaml
 ```
 kubectl describe ingress ingress-service
 ```
+
+## Introducing Skaffold
+
+<b>Skaffold</b> automates many tasks in a Kubernetes dev ENV
+
+```
+https://skaffold.dev
+```
+
+#### skaffold.yaml
+
+```
+skaffold dev
+```
