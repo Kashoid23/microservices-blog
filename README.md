@@ -17,46 +17,14 @@ npm install express cors nodemon
 touch index.js
 ```
 
-#### posts/index.js
-
-```
-const express = require('express');
-const bodyParser = require('body-parser')
-const { randomBytes } = require('crypto');
-const cors = require('cors');
-
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
-
-const posts = {};
-
-app.get('/posts', (req, res) => {
-    res.send(posts);
-});
-
-app.post('/posts', (req, res) => {
-    const id = randomBytes(4).toString('hex');
-    const { title } = req.body;
-
-    posts[id] = {
-        id, title
-    };
-
-    res.status(201).send(posts[id]);
-});
-
-app.listen(4000, () => {
-    console.log('Listening on 4000');
-});
-```
+#### [Update posts/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/posts/index.js)
 
 #### posts/package.json
 
 ```
-  "scripts": {
+"scripts": {
     "start": "nodemon index.js"
-  },
+},
 ```
 
 ```
@@ -73,46 +41,14 @@ npm install express cors nodemon
 touch index.js
 ```
 
-#### comments/index.js
-
-```
-const express = require('express');
-const bodyParser = require('body-parser')
-const { randomBytes } = require('crypto');
-const cors = require('cors');
-
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
-
-const commentsByPostId = {};
-
-app.get('/posts/:id/comments', (req, res) => {
-    res.send(commentsByPostId[req.params.id] || []);
-});
-
-app.post('/posts/:id/comments', (req, res) => {
-    const commentId = randomBytes(4).toString('hex');
-    const { content } = req.body;
-
-    const comments = commentsByPostId[req.params.id] || [];
-    comments.push({ id: commentId, content });
-    commentsByPostId[req.params.id] = comments;
-
-    res.status(201).send(comments);
-});
-
-app.listen(4001, () => {
-    console.log('Listening on 4001');
-});
-```
+#### [Update comments/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/comments/index.js)
 
 #### comments/package.json
 
 ```
-  "scripts": {
+"scripts": {
     "start": "nodemon index.js"
-  },
+},
 ```
 
 ```
@@ -126,21 +62,6 @@ npx create-react-app client
 npm install axios
 ```
 
-#### client/src/index.js
-
-```
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import App from './App';
-
-const root = ReactDOM.createRoot(document.getElementById('root'));
-root.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-);
-```
-
 #### client/public/index.html
 
 ```
@@ -149,147 +70,17 @@ root.render(
   </head>
 ```
 
-#### client/src/App.js
+#### [Update client/src/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/client/src/index.js)
 
-```
-import React from "react";
-import PostCreate from "./PostCreate";
-import PostList from "./PostList";
+#### [Update client/src/App.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/client/src/App.js)
 
-export default function App() {
-    return (
-        <div className="container">
-            <h1>Create Post</h1>
-            <PostCreate />
-            <hr />
-            <h1>Posts</h1>
-            <PostList />
-        </div>
-    );
-}
-```
+#### [Create client/src/PostCreate.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/client/src/PostCreate.js)
 
-#### client/src/PostCreate.js
+#### [Create client/src/PostList.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/client/src/PostList.js)
 
-```
-import React, { useState } from "react";
-import axios from "axios";
+#### [Create client/src/CommentList.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/client/src/CommentList.js)
 
-export default function PostCreate() {
-    const [title, setTitle] = useState("");
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        await axios.post('http://localhost:4000/posts', { title });
-        setTitle("");
-    };
-
-    return (
-        <div>
-            <form onSubmit={onSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="title">Title</label>
-                    <input value={title} onChange={e => setTitle(e.target.value)} type="text" id="title" className="form-control" />
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
-            </form>
-        </div>
-    );
-}
-```
-
-#### client/src/PostList.js
-
-```
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-import CommentCreate from "./CommentCreate";
-import CommentList from "./CommentList";
-
-export default function PostList() {
-    const [posts, setPosts] = useState({});
-
-    const fetchPosts = async () => {
-        const res = await axios.get('http://localhost:4000/posts');
-        setPosts(res.data);
-    };
-
-    useEffect(() => {
-        fetchPosts();
-    }, []);
-
-    return (
-        <div className="d-flex flex-row flex-wrap justify-content-between">
-            {Object.values(posts).map(({ id, title }) => (
-                <div key={id} className="card" style={{ width: '49%', marginBottom: '20px' }}>
-                    <div className="card-body">
-                        <h3>{title}</h3>
-                        <CommentList postId={id} />
-                        <CommentCreate postId={id} />
-                    </div>
-                </div>
-            ))}
-        </div>
-    );
-}
-```
-
-#### client/src/CommentList.js
-
-```
-import React, { useEffect, useState } from "react";
-import axios from "axios";
-
-export default function CommentList({ postId }) {
-    const [comments, setComments] = useState([]);
-
-    const fetchComments = async () => {
-        const res = await axios.get(`http://localhost:4001/posts/${postId}/comments`);
-        setComments(res.data);
-    };
-
-    useEffect(() => {
-        fetchComments();
-    }, []);
-
-    return (
-        <ul>
-            {Object.values(comments).map(({ id, content }) => (
-                <li key={id}>{content}</li>
-            ))}
-        </ul>
-    );
-}
-```
-
-#### client/src/CommentCreate.js
-
-```
-import React, { useState } from "react";
-import axios from "axios";
-
-export default function CommentCreate({ postId }) {
-    const [content, setContent] = useState("");
-
-    const onSubmit = async (e) => {
-        e.preventDefault();
-        await axios.post(`http://localhost:4001/posts/${postId}/comments`, { content, postId });
-        setContent("");
-    };
-
-    return (
-        <div>
-            <form onSubmit={onSubmit}>
-                <div className="mb-3">
-                    <label htmlFor="content">New Comment</label>
-                    <input value={content} onChange={e => setContent(e.target.value)} type="text" id="content" className="form-control" />
-                </div>
-                <button type="submit" className="btn btn-primary">Submit</button>
-            </form>
-        </div>
-    );
-}
-```
+#### [Create client/src/CommentCreate.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/client/src/CommentCreate.js)
 
 ```
 npm start
@@ -303,161 +94,11 @@ Communication strategies between services
 
 Ready to go Event Bus solutions - RabbitMQ, Kafka, NATS…
 
-#### event-bus/index.js
+#### [Create event-bus/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/d5e047583d17c326fb1c9707df750e74aee76ae8/event-bus/index.js)
 
-```
-const express = require('express');
-const bodyParser = require('body-parser')
-const axios = require('axios');
+#### [Update posts/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/d5e047583d17c326fb1c9707df750e74aee76ae8/posts/index.js)
 
-const app = express();
-app.use(bodyParser.json());
-
-const events = [];
-
-app.get('/events', (req, res) => {
-    res.send(events);
-});
-
-app.post('/events', (req, res) => {
-    const event = req.body;
-
-    events.push(event);
-
-    axios.post('http://localhost:4000/events', event).catch((err) => {
-        console.log('Error forwarding event to Posts Service', err.message);
-    });
-    axios.post('http://localhost:4001/events', event).catch((err) => {
-        console.log('Error forwarding event to Comments Service', err.message);
-    });
-    axios.post('http://localhost:4002/events', event).catch((err) => {
-        console.log('Error forwarding event to Query Service', err.message);
-    });
-    axios.post('http://localhost:4003/events', event).catch((err) => {
-        console.log('Error forwarding event to Moderation Service', err.message);
-    });
-
-    res.send({ status: 'OK' });
-});
-
-app.listen(4005, () => {
-    console.log('Listening on 4005');
-});
-```
-
-#### posts/index.js
-
-```
-const express = require('express');
-const bodyParser = require('body-parser')
-const { randomBytes } = require('crypto');
-const cors = require('cors');
-const axios = require('axios');
-
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
-
-const posts = {};
-
-app.get('/posts', (req, res) => {
-    res.send(posts);
-});
-
-app.post('/posts', (req, res) => {
-    const id = randomBytes(4).toString('hex');
-    const { title } = req.body;
-
-    posts[id] = {
-        id, title
-    };
-
-    axios.post('http://localhost:4005/events', {
-        type: 'PostCreated',
-        data: { id, title }
-    }).catch((err) => {
-        console.log('Error sending event to Event Bus', err.message);
-    });
-
-    res.status(201).send(posts[id]);
-});
-
-app.post('/events', (req, res) => {
-    console.log('Received Event:', req.body.type);
-
-    res.send({});
-});
-
-app.listen(4000, () => {
-    console.log('Listening on 4000');
-});
-```
-
-#### query/index.js
-
-```
-const express = require('express');
-const bodyParser = require('body-parser')
-const cors = require('cors');
-const axios = require('axios');
-
-const app = express();
-app.use(bodyParser.json());
-app.use(cors());
-
-const posts = {};
-
-const handleEvent = (type, data) => {
-    if (type === 'PostCreated') {
-        const { id, title } = data;
-        posts[id] = { id, title, comments: [] };
-    }
-
-    if (type === 'CommentCreated') {
-        const { id, content, postId, status } = data;
-        const post = posts[postId];
-        if (post) {
-            post.comments.push({ id, content, status });
-        }
-    }
-
-    if (type === 'CommentUpdated') {
-        const { id, postId, status } = data;
-        const post = posts[postId];
-        if (post) {
-            const comment = post.comments.find(comment => comment.id === id);
-            if (comment) {
-                comment.status = status;
-            }
-        }
-    }
-};
-
-app.get('/posts', (req, res) => {
-    res.send(posts);
-});
-
-app.post('/events', (req, res) => {
-    const { type, data } = req.body;
-
-    handleEvent(type, data);
-
-    res.send({});
-});
-
-app.listen(4002, () => {
-    console.log('Listening on 4002');
-
-    axios.get('http://localhost:4005/events').then((res) => {
-        for (let event of res.data) {
-            console.log('Processing event:', event.type);
-            handleEvent(event.type, event.data);
-        }
-    }).catch((err) => {
-        console.log('Error fetching events from Event Bus', err.message);
-    });
-});
-```
+#### [Update query/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/d5e047583d17c326fb1c9707df750e74aee76ae8/query/index.js)
 
 # Section 3
 
@@ -474,24 +115,9 @@ touch Dockerfile
 touch .dockerignore
 ```
 
-#### posts/.dockerignore
+#### [Create posts/.dockerignore](https://github.com/Kashoid23/microservices-nodejs-react/blob/1125425fa2b893ea71f50ada2b226b2bbc96a0ec/query/.dockerignore)
 
-```
-node_modules
-```
-
-#### posts/Dockerfile
-
-```
-FROM node:alpine
-
-WORKDIR /app
-COPY package.json .
-RUN npm install
-COPY . .
-
-CMD ["npm", "start"]
-```
+#### [Create posts/Dockerfile](https://github.com/Kashoid23/microservices-nodejs-react/blob/1125425fa2b893ea71f50ada2b226b2bbc96a0ec/query/Dockerfile)
 
 ```
 docker build -t kashoid/blog-posts .
@@ -521,27 +147,7 @@ cd k8s
 touch posts-deployment.yaml
 ```
 
-#### infra/k8s/posts-deployment.yaml
-
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: posts-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: posts
-  template:
-    metadata:
-      labels:
-        app: posts
-    spec:
-      containers:
-        - name: posts
-          image: kashoid/blog-posts
-```
+#### [Create infra/k8s/posts-deployment.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/master/infra/k8s/posts-deployment.yaml)
 
 ```
 kubectl apply -f posts-deployment.yaml
@@ -569,23 +175,7 @@ cd infra/k8s
 touch posts-service.yaml
 ```
 
-#### infra/k8s/posts-service.yaml
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: posts-service
-spec:
-  type: NodePort
-  selector:
-    app: posts
-  ports:
-    - name: posts
-      protocol: TCP
-      port: 4000
-      targetPort: 4000
-```
+#### [infra/k8s/posts-service.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/eeb39fe39d0088298f3c70543c7a27b8f2f41284/infra/k8s/posts-service.yaml)
 
 ```
 kubectl apply -f posts-service.yaml
@@ -636,50 +226,7 @@ Node.js app
 https://kubernetes.github.io/ingress-nginx/deploy/#docker-desktop
 ```
 
-#### infra/k8s/ingress-service.yaml
-
-```
-apiVersion: networking.k8s.io/v1
-kind: Ingress
-metadata:
-  name: ingress-service
-  annotations:
-    nginx.ingress.kubernetes.io/use-regex: "true"
-spec:
-  ingressClassName: nginx
-  rules:
-    - host: blog.com
-      http:
-        paths:
-          - path: /posts
-            pathType: Prefix
-            backend:
-              service:
-                name: posts-service
-                port:
-                  number: 4000
-          - path: /posts/?(.*)/comments
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: comments-service
-                port:
-                  number: 4001
-          - path: /posts/comments
-            pathType: Prefix
-            backend:
-              service:
-                name: query-service
-                port:
-                  number: 4002
-          - path: /?(.*)
-            pathType: ImplementationSpecific
-            backend:
-              service:
-                name: client-service
-                port:
-                  number: 3000
-```
+#### [Create infra/k8s/ingress-service.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/8db82f135c803bbcb505d69bae8f210261167c76/infra/k8s/ingress-service.yaml)
 
 ```
 kubectl apply -f ingress-service.yaml
@@ -704,45 +251,9 @@ docker push kashoid/blog-client
 
 Replace localhost:400X with blog.com for React components
 
-#### infra/k8s/client-deployment.yaml
+#### [Create infra/k8s/client-deployment.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/8db82f135c803bbcb505d69bae8f210261167c76/infra/k8s/client-deployment.yaml)
 
-```
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: client-deployment
-spec:
-  replicas: 1
-  selector:
-    matchLabels:
-      app: client
-  template:
-    metadata:
-      labels:
-        app: client
-    spec:
-      containers:
-        - name: client
-          image: kashoid/blog-client
-```
-
-#### infra/k8s/client-service.yaml
-
-```
-apiVersion: v1
-kind: Service
-metadata:
-  name: client-service
-spec:
-  type: ClusterIP
-  selector:
-    app: client
-  ports:
-    - name: client
-      protocol: TCP
-      port: 3000
-      targetPort: 3000
-```
+#### [Create infra/k8s/client-service.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/8db82f135c803bbcb505d69bae8f210261167c76/infra/k8s/client-service.yaml)
 
 ```
 kubectl apply -f client-deployment.yaml
@@ -755,13 +266,13 @@ kubectl describe ingress ingress-service
 
 ## Introducing Skaffold
 
-<b>Skaffold</b> automates many tasks in a Kubernetes dev ENV
+<b>Skaffold</b> is a command line tool that facilitates continuous development for container based & Kubernetes applications. Skaffold handles the workflow for building, pushing, and deploying your application, and provides building blocks for creating CI/CD pipelines.
 
 ```
 https://skaffold.dev
 ```
 
-#### skaffold.yaml
+#### [Create skaffold.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/59534cb54a4562b92ef7e9fafc3b3191daedf55d/skaffold.yaml)
 
 ```
 skaffold dev
