@@ -16,10 +16,9 @@ mkdir posts
 cd posts
 npm init -y
 npm install express cors nodemon
-touch index.js
 ```
 
-#### [Update posts/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/posts/index.js)
+#### [Create posts/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/posts/index.js)
 
 #### posts/package.json
 
@@ -40,10 +39,9 @@ mkdir comments
 cd comments
 npm init -y
 npm install express cors nodemon
-touch index.js
 ```
 
-#### [Update comments/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/comments/index.js)
+#### [Create comments/index.js](https://github.com/Kashoid23/microservices-nodejs-react/blob/4084f7f8f1ee4a951dcebe89d0537be52e58d910/comments/index.js)
 
 #### comments/package.json
 
@@ -57,7 +55,7 @@ touch index.js
 npm start
 ```
 
-## Client
+## Client service
 
 ```
 npx create-react-app client
@@ -111,12 +109,6 @@ Ready to go Event Bus solutions - RabbitMQ, Kafka, NATS…
 
 ## Dockerizing the Posts service
 
-```
-cd posts
-touch Dockerfile
-touch .dockerignore
-```
-
 #### [Create posts/.dockerignore](https://github.com/Kashoid23/microservices-nodejs-react/blob/1125425fa2b893ea71f50ada2b226b2bbc96a0ec/query/.dockerignore)
 
 #### [Create posts/Dockerfile](https://github.com/Kashoid23/microservices-nodejs-react/blob/1125425fa2b893ea71f50ada2b226b2bbc96a0ec/query/Dockerfile)
@@ -146,7 +138,6 @@ mkdir infra
 cd infra
 mkdir k8s
 cd k8s
-touch posts-deployment.yaml
 ```
 
 #### [Create infra/k8s/posts-deployment.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/master/infra/k8s/posts-deployment.yaml)
@@ -171,11 +162,6 @@ kubectl rollout restart deployment posts-deployment
 - <b>Node Port</b> - accessible from outside the cluster, for testing, demo environments, or situations where you have your own external load-balancing solution and want traffic routed to your Nodes
 - <b>Load Balancer</b> - accessible from outside the cluster, the standard way to expose public-facing, production applications on a cloud platform
 - <b>External Name</b> - for referencing external services (like a database hosted outside of Kubernetes) using a consistent internal service name
-
-```
-cd infra/k8s
-touch posts-service.yaml
-```
 
 #### [Create infra/k8s/posts-service.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/eeb39fe39d0088298f3c70543c7a27b8f2f41284/infra/k8s/posts-service.yaml)
 
