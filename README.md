@@ -24,7 +24,7 @@ npm install express cors nodemon
 
 ```
 "scripts": {
-    "start": "nodemon index.js"
+  "start": "nodemon index.js"
 },
 ```
 
@@ -47,7 +47,7 @@ npm install express cors nodemon
 
 ```
 "scripts": {
-    "start": "nodemon index.js"
+  "start": "nodemon index.js"
 },
 ```
 
@@ -131,13 +131,6 @@ docker ps
 
 ```
 kubectl version
-```
-
-```
-mkdir infra
-cd infra
-mkdir k8s
-cd k8s
 ```
 
 #### [Create infra/k8s/posts-deployment.yaml](https://github.com/Kashoid23/microservices-nodejs-react/blob/master/infra/k8s/posts-deployment.yaml)
